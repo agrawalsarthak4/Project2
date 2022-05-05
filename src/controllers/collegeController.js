@@ -1,7 +1,6 @@
-const collegeModel= require("../models/collegeModel")
-const mongoose=require("mongoose")
-
-// const jwt=require("jsonwebtoken")
+// const authorModel = require("../models/authorModel")
+const collegeModel = require("../models/collegeModel")
+const internModel = require("../models/internModel")
 
 const valid = function (value) {
 
@@ -23,8 +22,8 @@ const createCollege = async function (req, res) {
 
         if (!valid(college.fullName)) { return res.status(400).send({ status: false, message: "fullName is not valid" }) }
 
-        let check1 = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))$/
-        if (!check1.test(college.logoLink)) { return res.status(400).send({ status: false, message: "logoLink is not valid " }) }
+        if (! /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        .test(college.logoLink)) { return res.status(400).send({ status: false, message: "logoLink  is not valid " }) }
 
         else {
             let collegeCreated = await collegeModel.create(college)
@@ -32,9 +31,6 @@ const createCollege = async function (req, res) {
         }
     } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
 }
-
-
-
 
 
 
@@ -49,7 +45,7 @@ const collegeDetails = async function (req, res) {
 
         if (collegeDetail==null) { res.status(404).send({ status: false, msg: "collegeDetail not found" }) }
 
-        let id = collegeDetail._id.toString()
+        let id = collegeDetail._id
         let check2 = await internModel.find({ collegeId: id })
 
         let obj = {
@@ -69,6 +65,5 @@ const collegeDetails = async function (req, res) {
 module.exports.createCollege = createCollege
 
 module.exports.collegeDetails = collegeDetails
-
 
 
