@@ -25,7 +25,7 @@ const createCollege = async function (req, res) {
         if (! /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
         .test(college.logoLink)) { return res.status(400).send({ status: false, message: "logoLink  is not valid " }) }
 
-        else {
+         {
             let collegeCreated = await collegeModel.create(college)
             res.status(201).send({ status: true, data: collegeCreated })
         }
@@ -46,7 +46,9 @@ const collegeDetails = async function (req, res) {
         if (collegeDetail==null) { res.status(404).send({ status: false, msg: "collegeDetail not found" }) }
 
         let id = collegeDetail._id
-        let check2 = await internModel.find({ collegeId: id })
+        let check2 = await internModel.find({ collegeId: id, isDeleted: false})
+
+
 
         let obj = {
             "name": collegeDetail.name,

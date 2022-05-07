@@ -9,47 +9,47 @@ const moment = require('moment');
 const createInternData = async function (req, res) {
     try {
         let internData = req.body
-
-        if (!internData.name) { return res.status(400).send({ status: false, message: "name is required" }) }
-
-        if (!internData.email) { return res.status(400).send({ status: false, message: "email is required" }) }
-
-        if (!internData.collegeId) { return res.status(400).send({ status: false, message: "collegeId is required" }) }
-
-        if (!internData. mobile) { return res.status(400).send({ status: false, message: " mobile number is required" }) }
+        const { name, mobile, email, collegeName } = internData;
 
 
-        if (typeof(internData.name)!== "string" || internData.name.trim().length == 0) { return res.status(400).send({ status: false, message: "name is not valid" }) }
+        if (!name) { return res.status(400).send({ status: false, message: "name is required" }) }
+
+        if (!email) { return res.status(400).send({ status: false, message: "email is required" }) }
+
+        if (!collegeName) { return res.status(400).send({ status: false, message: "collegeName is required" }) }
+
+        if (!mobile) { return res.status(400).send({ status: false, message: " mobile number is required" }) }
+
+
+        if (typeof(name)!== "string" || internData.name.trim().length == 0) { return res.status(400).send({ status: false, message: "name is not valid" }) }
 
        
         let pattern1 =/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1}[A-Za-z.]{2,6}$/
-        if (!pattern1.test(internData. email)) {
+        if (!pattern1.test( email)) {
           return res.status(400).send({ status: false, msg: "Invalid Email" });
         }
     
-        let check=/^(\+\d{1,3}[- ]?)?\d{10}$/
+        let check=/^[6-9]\d{9}$/
+        if(!check.test( mobile)){ return res.status(400).send({ status: false, message: "mobile number is not valid" }) }
 
-        if(!check.test(internData. mobile)){ return res.status(400).send({ status: false, message: "mobile number is not valid" }) }
-        let Id = internData.collegeId
+        if (collegeName) {
+          const findCollege = await collegeModel.findOne({ name: collegeName , isDeleted:false });
+          if (!findCollege) {return res.status(404).send({ status: false, msg: "College Not Found" }) }
+          
 
-        let pattern = /^[0-9A-Fa-f]{24}$/
+          internData.collegeId = findCollege._id;
+          const internCreated = await internModel.create(internData);
+          return res.status(201).send({ status: true, data: internCreated });
 
-        if (!pattern.test(Id)) { return res.status(400).send({ status: false, message: "collegeId is not valid" }) }
+        }
+      } catch (err) {
+        res.status(500).send({ status: false, msg: err.message });
+      }
+    };
 
-        let college = await collegeModel.findOne({ _id: Id })
-
-        if (college == null)  { return res.status(400).send({ status: false, message: "college is not persent" }) }
-
-      
-        let internCreated = await internModel.create(internData)
-        res.status(201).send({status:true, data: internCreated })
-    } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
-
-
-
-}
 
 module.exports.createInternData= createInternData
+
 
 
 
