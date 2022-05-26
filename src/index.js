@@ -1,20 +1,23 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const route = require('./routes/route.js');
-const { default: mongoose } = require('mongoose');
+var bodyParser = require('body-parser');
+var multer = require('multer') // HERE
+const route = require('./route/route.js');
+
 const app = express();
+
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer().any()) // HERE
+const mongoose = require('mongoose')
 
 
-mongoose.connect("mongodb+srv://urajrishu:aUHDB96UyJaq9SB@cluster0.1wief.mongodb.net/sarthak-db", {
-    useNewUrlParser: true
-})
-.then( () => console.log("MongoDb is connected"))
-.catch ( err => console.log(err) )
 
-
+mongoose.connect("mongodb+srv://shradha_24:Ourcloudy007@cluster0.tovfx.mongodb.net/group26Database?retryWrites=true&w=majority", { useNewUrlParser: true })
+    .then(() => console.log('mongodb Rock n Roll on 3000'))
+    .catch(err => console.log(err))
+   
 
 app.use('/', route);
 
